@@ -11,9 +11,11 @@ exports.CatBranchesManager = class CatBranchesManager extends Object {
 
     // после загрузки данных, надо настроить отборы в метаданных полей рисовалки
     $p.adapters.pouch.once("pouch_complete_loaded", () => {
-      const {ПараметрВыбора} = $p.enm.parameters_keys_applying;
-      const {furn, sys} = $p.job_prm.properties;
-      if(!$p.current_user.branch.empty() && $p.job_prm.builder) {
+      if($p.job_prm.properties && $p.current_user && !$p.current_user.branch.empty() && $p.job_prm.builder) {
+
+        const {ПараметрВыбора} = $p.enm.parameters_keys_applying;
+        const {furn, sys} = $p.job_prm.properties;
+
         // накапливаем
         $p.current_user.branch.load()
           .then(({keys}) => {
@@ -36,7 +38,11 @@ exports.CatBranchesManager = class CatBranchesManager extends Object {
 
             // применяем
             if(branch_filter.furn.length) {
-
+              const mf = $p.cat.characteristics.metadata('constructions').fields.furn;
+              mf.choice_params.push({
+                name: "ref",
+                path: {inh: branch_filter.furn}
+              });
             }
             if(branch_filter.sys.length) {
               const mf = $p.dp.buyers_order.metadata().fields.sys;

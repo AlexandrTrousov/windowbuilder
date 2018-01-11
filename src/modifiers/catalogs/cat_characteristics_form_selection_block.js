@@ -136,7 +136,7 @@
 							}
 						}
 					});
-					return crefs.length ? _mgr.pouch_load_array(crefs, true) : crefs;
+					return crefs.length ? _mgr.adapter.load_array(_mgr, crefs, true) : crefs;
 				})
 				.then(() => {
 
@@ -155,7 +155,7 @@
 						if(!attr.filter || presentation.toLowerCase().match(attr.filter.toLowerCase()))
 							crefs.push({
 								ref: o.ref,
-								presentation: presentation,
+                presentation:   '<div style="white-space:normal"> ' + presentation + ' </div>',
 								svg: o._attachments ? o._attachments.svg : ""
 							});
 					});
@@ -202,12 +202,12 @@
 
 			  setTimeout(() => {
           const l = [];
-          const {base_block, branch_filter: {sys}} = $p.job_prm.builder;
+          const {base_block, branch_filter} = $p.job_prm.builder;
 
           base_block.forEach(({note, presentation, ref, production}) => {
-            if(sys && sys.length && production.count()) {
+            if(branch_filter && branch_filter.sys && branch_filter.sys.length && production.count()) {
               const {characteristic} = production.get(0);
-              if(!sys.some((filter) => characteristic.sys._hierarchy(filter))){
+              if(!branch_filter.sys.some((filter) => characteristic.sys._hierarchy(filter))){
                 return;
               }
             }
